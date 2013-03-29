@@ -19058,8 +19058,8 @@ instruction that can update the addressing register.
 * Multi-Alternative::   When an insn has two alternative constraint-patterns.
 * Class Preferences::   Constraints guide which hard register to put things in.
 * Modifiers::           More precise control over effects of constraints.
-* Disable Insn Alternatives:: Disable insn alternatives using the `enabled' attribute.
 * Machine Constraints:: Existing constraints for some particular machines.
+* Disable Insn Alternatives:: Disable insn alternatives using the `enabled' attribute.
 * Define Constraints::  How to define machine-specific constraints.
 * C Constraint Interface:: How to test constraints from C code.
 
@@ -19429,7 +19429,7 @@ considered general.
 register classes are defined.  Then none of this complexity is relevant.
 
 
-File: gccint.info,  Node: Modifiers,  Next: Disable Insn Alternatives,  Prev: Class Preferences,  Up: Constraints
+File: gccint.info,  Node: Modifiers,  Next: Machine Constraints,  Prev: Class Preferences,  Up: Constraints
 
 16.8.4 Constraint Modifier Characters
 -------------------------------------
@@ -19523,7 +19523,7 @@ Here are constraint modifier characters.
             ...)
 
 
-File: gccint.info,  Node: Machine Constraints,  Next: Define Constraints,  Prev: Disable Insn Alternatives,  Up: Constraints
+File: gccint.info,  Node: Machine Constraints,  Next: Disable Insn Alternatives,  Prev: Modifiers,  Up: Constraints
 
 16.8.5 Constraints for Particular Machines
 ------------------------------------------
@@ -20783,20 +20783,6 @@ _MIPS--`config/mips/constraints.md'_
     `R'
           An address that can be used in a non-macro load or store.
 
-    `ZC'
-          When compiling microMIPS code, this constraint matches a
-          memory operand whose address is formed from a base register
-          and a 12-bit offset.  These operands can be used for
-          microMIPS instructions such as `ll' and `sc'.  When not
-          compiling for microMIPS code, `ZC' is equivalent to `R'.
-
-    `ZD'
-          When compiling microMIPS code, this constraint matches an
-          address operand that is formed from a base register and a
-          12-bit offset.  These operands can be used for microMIPS
-          instructions such as `prefetch'.  When not compiling for
-          microMIPS code, `ZD' is equivalent to `p'.
-
 _Motorola 680x0--`config/m68k/constraints.md'_
 
     `a'
@@ -21764,7 +21750,7 @@ _Xtensa--`config/xtensa/constraints.md'_
 
 
 
-File: gccint.info,  Node: Disable Insn Alternatives,  Next: Machine Constraints,  Prev: Modifiers,  Up: Constraints
+File: gccint.info,  Node: Disable Insn Alternatives,  Next: Define Constraints,  Prev: Machine Constraints,  Up: Constraints
 
 16.8.6 Disable insn alternatives using the `enabled' attribute
 --------------------------------------------------------------
@@ -21843,7 +21829,7 @@ in the machine description files:
              (const_int 0)))
 
 
-File: gccint.info,  Node: Define Constraints,  Next: C Constraint Interface,  Prev: Machine Constraints,  Up: Constraints
+File: gccint.info,  Node: Define Constraints,  Next: C Constraint Interface,  Prev: Disable Insn Alternatives,  Up: Constraints
 
 16.8.7 Defining Machine-Specific Constraints
 --------------------------------------------
@@ -36140,39 +36126,39 @@ be documented in `extend.texi'.
 
  -- Target Hook: bool TARGET_OPTION_VALID_ATTRIBUTE_P (tree FNDECL,
           tree NAME, tree ARGS, int FLAGS)
-     This hook is called to parse the `attribute(option("..."))', and
-     it allows the function to set different target machine compile time
-     options for the current function that might be different than the
-     options specified on the command line.  The hook should return
-     `true' if the options are valid.
+     This hook is called to parse `attribute(target("..."))', which
+     allows setting target-specific options on individual functions.
+     These function-specific options may differ from the options
+     specified on the command line.  The hook should return `true' if
+     the options are valid.
 
-     The hook should set the DECL_FUNCTION_SPECIFIC_TARGET field in the
-     function declaration to hold a pointer to a target specific STRUCT
-     CL_TARGET_OPTION structure.
+     The hook should set the `DECL_FUNCTION_SPECIFIC_TARGET' field in
+     the function declaration to hold a pointer to a target-specific
+     `struct cl_target_option' structure.
 
  -- Target Hook: void TARGET_OPTION_SAVE (struct cl_target_option *PTR)
-     This hook is called to save any additional target specific
-     information in the STRUCT CL_TARGET_OPTION structure for function
-     specific options.  *Note Option file format::.
+     This hook is called to save any additional target-specific
+     information in the `struct cl_target_option' structure for
+     function-specific options.  *Note Option file format::.
 
  -- Target Hook: void TARGET_OPTION_RESTORE (struct cl_target_option
           *PTR)
-     This hook is called to restore any additional target specific
-     information in the STRUCT CL_TARGET_OPTION structure for function
-     specific options.
+     This hook is called to restore any additional target-specific
+     information in the `struct cl_target_option' structure for
+     function-specific options.
 
  -- Target Hook: void TARGET_OPTION_PRINT (FILE *FILE, int INDENT,
           struct cl_target_option *PTR)
-     This hook is called to print any additional target specific
-     information in the STRUCT CL_TARGET_OPTION structure for function
-     specific options.
+     This hook is called to print any additional target-specific
+     information in the `struct cl_target_option' structure for
+     function-specific options.
 
  -- Target Hook: bool TARGET_OPTION_PRAGMA_PARSE (tree ARGS, tree
           POP_TARGET)
-     This target hook parses the options for `#pragma GCC option' to
-     set the machine specific options for functions that occur later in
-     the input stream.  The options should be the same as handled by the
-     `TARGET_OPTION_VALID_ATTRIBUTE_P' hook.
+     This target hook parses the options for `#pragma GCC target', which
+     sets the target-specific options for functions that occur later in
+     the input stream.  The options accepted should be the same as
+     those handled by the `TARGET_OPTION_VALID_ATTRIBUTE_P' hook.
 
  -- Target Hook: void TARGET_OPTION_OVERRIDE (void)
      Sometimes certain combinations of command options do not make
@@ -38209,14 +38195,14 @@ members.
 * Menu:
 
 * GTY Options::         What goes inside a `GTY(())'.
-* GGC Roots::           Making global variables GGC roots.
 * User GC::		Adding user-provided GC marking routines.
+* GGC Roots::           Making global variables GGC roots.
 * Files::               How the generated files work.
 * Invoking the garbage collector::   How to invoke the garbage collector.
 * Troubleshooting::     When something does not work as expected.
 
 
-File: gccint.info,  Node: GTY Options,  Next: GGC Roots,  Up: Type Information
+File: gccint.info,  Node: GTY Options,  Next: User GC,  Up: Type Information
 
 22.1 The Inside of a `GTY(())'
 ==============================
@@ -38522,7 +38508,7 @@ helpful when you have a complicated expression.
      *note User GC:: for details on what functions need to be provided.
 
 
-File: gccint.info,  Node: User GC,  Next: Files,  Prev: GGC Roots,  Up: Type Information
+File: gccint.info,  Node: User GC,  Next: GGC Roots,  Prev: GTY Options,  Up: Type Information
 
 22.2 Support for user-provided GC marking routines
 ==================================================
@@ -38565,8 +38551,8 @@ gt_pointer_operator, void *)' are slightly different.  In this case,
 the operation `op' must be applied to the _address_ of every pointer
 field.
 
-22.3 User-provided marking routines for template types
-======================================================
+22.2.1 User-provided marking routines for template types
+--------------------------------------------------------
 
 When a template type `TP' is marked with `GTY', all instances of that
 type are considered user-provided types.  This means that the
@@ -38629,9 +38615,9 @@ restrictions apply:
      the pointer (see the code snippets above).
 
 
-File: gccint.info,  Node: GGC Roots,  Next: User GC,  Prev: GTY Options,  Up: Type Information
+File: gccint.info,  Node: GGC Roots,  Next: Files,  Prev: User GC,  Up: Type Information
 
-22.4 Marking Roots for the Garbage Collector
+22.3 Marking Roots for the Garbage Collector
 ============================================
 
 In addition to keeping track of types, the type machinery also locates
@@ -38648,9 +38634,9 @@ variable in a header somewhere--mark that, not the definition.  Or, if
 the variable is only used in one file, make it `static'.
 
 
-File: gccint.info,  Node: Files,  Next: Invoking the garbage collector,  Prev: User GC,  Up: Type Information
+File: gccint.info,  Node: Files,  Next: Invoking the garbage collector,  Prev: GGC Roots,  Up: Type Information
 
-22.5 Source Files Containing Type Information
+22.4 Source Files Containing Type Information
 =============================================
 
 Whenever you add `GTY' markers to a source file that previously had
@@ -38708,7 +38694,7 @@ mode.
 
 File: gccint.info,  Node: Invoking the garbage collector,  Next: Troubleshooting,  Prev: Files,  Up: Type Information
 
-22.6 How to invoke the garbage collector
+22.5 How to invoke the garbage collector
 ========================================
 
 The GCC garbage collector GGC is only invoked explicitly. In contrast
@@ -38735,7 +38721,7 @@ all the fields are initialized manually immediately after allocation.
 
 File: gccint.info,  Node: Troubleshooting,  Prev: Invoking the garbage collector,  Up: Type Information
 
-22.7 Troubleshooting the garbage collector
+22.6 Troubleshooting the garbage collector
 ==========================================
 
 With the current garbage collector implementation, most issues should
@@ -49623,164 +49609,164 @@ Node: Simple Constraints833445
 Node: Multi-Alternative846301
 Node: Class Preferences849142
 Node: Modifiers850034
-Node: Machine Constraints854286
-Node: Disable Insn Alternatives905021
-Node: Define Constraints907914
-Node: C Constraint Interface914695
-Node: Standard Names918336
-Ref: shift patterns940887
-Ref: prologue instruction pattern985827
-Ref: window_save instruction pattern986320
-Ref: epilogue instruction pattern986595
-Node: Pattern Ordering1004166
-Node: Dependent Patterns1005402
-Node: Jump Patterns1007022
-Ref: Jump Patterns-Footnote-11009166
-Node: Looping Patterns1009212
-Node: Insn Canonicalizations1013940
-Node: Expander Definitions1018531
-Node: Insn Splitting1026743
-Node: Including Patterns1036345
-Node: Peephole Definitions1038125
-Node: define_peephole1039378
-Node: define_peephole21045709
-Node: Insn Attributes1048776
-Node: Defining Attributes1049882
-Ref: define_enum_attr1053093
-Node: Expressions1054128
-Node: Tagging Insns1060877
-Node: Attr Example1065230
-Node: Insn Lengths1067604
-Node: Constant Attributes1070663
-Node: Delay Slots1071832
-Node: Processor pipeline description1075056
-Ref: Processor pipeline description-Footnote-11093869
-Node: Conditional Execution1094191
-Node: Define Subst1097253
-Node: Define Subst Example1099287
-Node: Define Subst Pattern Matching1102281
-Node: Define Subst Output Template1103506
-Node: Constant Definitions1105576
-Ref: define_enum1109358
-Node: Iterators1109846
-Node: Mode Iterators1110424
-Node: Defining Mode Iterators1111402
-Node: Substitutions1112896
-Node: Examples1115137
-Node: Code Iterators1116585
-Node: Int Iterators1118864
-Node: Subst Iterators1121322
-Node: Target Macros1123014
-Node: Target Structure1126102
-Node: Driver1128217
-Node: Run-time Target1147000
-Node: Per-Function Data1156153
-Node: Storage Layout1158918
-Node: Type Layout1184993
-Node: Registers1200320
-Node: Register Basics1201294
-Node: Allocation Order1206799
-Node: Values in Registers1209245
-Node: Leaf Functions1216734
-Node: Stack Registers1219592
-Node: Register Classes1220864
-Node: Old Constraints1250869
-Node: Stack and Calling1258021
-Node: Frame Layout1258555
-Node: Exception Handling1269435
-Node: Stack Checking1275657
-Node: Frame Registers1280470
-Node: Elimination1288729
-Node: Stack Arguments1292958
-Node: Register Arguments1299820
-Node: Scalar Return1320136
-Node: Aggregate Return1326222
-Node: Caller Saves1330432
-Node: Function Entry1331610
-Node: Profiling1342714
-Node: Tail Calls1344413
-Node: Stack Smashing Protection1346316
-Node: Varargs1347944
-Node: Trampolines1354640
-Node: Library Calls1360683
-Node: Addressing Modes1365622
-Node: Anchored Addresses1385656
-Node: Condition Code1388305
-Node: CC0 Condition Codes1390434
-Node: MODE_CC Condition Codes1393680
-Node: Cond Exec Macros1400201
-Node: Costs1400547
-Node: Scheduling1417016
-Node: Sections1436422
-Node: PIC1452120
-Node: Assembler Format1454180
-Node: File Framework1455318
-Ref: TARGET_HAVE_SWITCHABLE_BSS_SECTIONS1462259
-Node: Data Output1465524
-Node: Uninitialized Data1473300
-Node: Label Output1478311
-Node: Initialization1501279
-Node: Macros for Initialization1507241
-Node: Instruction Output1513964
-Node: Dispatch Tables1524466
-Node: Exception Region Output1528844
-Node: Alignment Output1535527
-Node: Debugging Info1540072
-Node: All Debuggers1540742
-Node: DBX Options1543597
-Node: DBX Hooks1549046
-Node: File Names and DBX1550355
-Node: SDB and DWARF1552467
-Node: VMS Debug1558539
-Node: Floating Point1559126
-Node: Mode Switching1563602
-Node: Target Attributes1567598
-Node: Emulated TLS1575903
-Node: MIPS Coprocessors1579293
-Node: PCH Target1580590
-Node: C++ ABI1582432
-Node: Named Address Spaces1587224
-Node: Misc1592163
-Ref: TARGET_SHIFT_TRUNCATION_MASK1598905
-Node: Host Config1644071
-Node: Host Common1645139
-Node: Filesystem1647518
-Node: Host Misc1651633
-Node: Fragments1654082
-Node: Target Fragment1655277
-Node: Host Fragment1665910
-Node: Collect21666150
-Node: Header Dirs1668786
-Node: Type Information1670209
-Node: GTY Options1673432
-Node: User GC1687755
-Node: GGC Roots1691472
-Node: Files1692194
-Node: Invoking the garbage collector1694899
-Node: Troubleshooting1696402
-Node: Plugins1697478
-Node: Plugins loading1698596
-Node: Plugin API1699465
-Node: Plugins pass1706494
-Node: Plugins GC1708463
-Node: Plugins description1710123
-Node: Plugins attr1710658
-Node: Plugins recording1712543
-Node: Plugins gate1713393
-Node: Plugins tracking1713984
-Node: Plugins building1714572
-Node: LTO1716358
-Node: LTO Overview1717219
-Node: LTO object file layout1723051
-Node: IPA1727683
-Node: WHOPR1736648
-Node: Internal flags1741339
-Node: Funding1742551
-Node: GNU Project1745034
-Node: Copying1745683
-Node: GNU Free Documentation License1783214
-Node: Contributors1808354
-Node: Option Index1845759
-Node: Concept Index1846563
+Node: Machine Constraints854280
+Node: Disable Insn Alternatives904330
+Node: Define Constraints907232
+Node: C Constraint Interface914019
+Node: Standard Names917660
+Ref: shift patterns940211
+Ref: prologue instruction pattern985151
+Ref: window_save instruction pattern985644
+Ref: epilogue instruction pattern985919
+Node: Pattern Ordering1003490
+Node: Dependent Patterns1004726
+Node: Jump Patterns1006346
+Ref: Jump Patterns-Footnote-11008490
+Node: Looping Patterns1008536
+Node: Insn Canonicalizations1013264
+Node: Expander Definitions1017855
+Node: Insn Splitting1026067
+Node: Including Patterns1035669
+Node: Peephole Definitions1037449
+Node: define_peephole1038702
+Node: define_peephole21045033
+Node: Insn Attributes1048100
+Node: Defining Attributes1049206
+Ref: define_enum_attr1052417
+Node: Expressions1053452
+Node: Tagging Insns1060201
+Node: Attr Example1064554
+Node: Insn Lengths1066928
+Node: Constant Attributes1069987
+Node: Delay Slots1071156
+Node: Processor pipeline description1074380
+Ref: Processor pipeline description-Footnote-11093193
+Node: Conditional Execution1093515
+Node: Define Subst1096577
+Node: Define Subst Example1098611
+Node: Define Subst Pattern Matching1101605
+Node: Define Subst Output Template1102830
+Node: Constant Definitions1104900
+Ref: define_enum1108682
+Node: Iterators1109170
+Node: Mode Iterators1109748
+Node: Defining Mode Iterators1110726
+Node: Substitutions1112220
+Node: Examples1114461
+Node: Code Iterators1115909
+Node: Int Iterators1118188
+Node: Subst Iterators1120646
+Node: Target Macros1122338
+Node: Target Structure1125426
+Node: Driver1127541
+Node: Run-time Target1146324
+Node: Per-Function Data1155477
+Node: Storage Layout1158242
+Node: Type Layout1184317
+Node: Registers1199644
+Node: Register Basics1200618
+Node: Allocation Order1206123
+Node: Values in Registers1208569
+Node: Leaf Functions1216058
+Node: Stack Registers1218916
+Node: Register Classes1220188
+Node: Old Constraints1250193
+Node: Stack and Calling1257345
+Node: Frame Layout1257879
+Node: Exception Handling1268759
+Node: Stack Checking1274981
+Node: Frame Registers1279794
+Node: Elimination1288053
+Node: Stack Arguments1292282
+Node: Register Arguments1299144
+Node: Scalar Return1319460
+Node: Aggregate Return1325546
+Node: Caller Saves1329756
+Node: Function Entry1330934
+Node: Profiling1342038
+Node: Tail Calls1343737
+Node: Stack Smashing Protection1345640
+Node: Varargs1347268
+Node: Trampolines1353964
+Node: Library Calls1360007
+Node: Addressing Modes1364946
+Node: Anchored Addresses1384980
+Node: Condition Code1387629
+Node: CC0 Condition Codes1389758
+Node: MODE_CC Condition Codes1393004
+Node: Cond Exec Macros1399525
+Node: Costs1399871
+Node: Scheduling1416340
+Node: Sections1435746
+Node: PIC1451444
+Node: Assembler Format1453504
+Node: File Framework1454642
+Ref: TARGET_HAVE_SWITCHABLE_BSS_SECTIONS1461583
+Node: Data Output1464848
+Node: Uninitialized Data1472624
+Node: Label Output1477635
+Node: Initialization1500603
+Node: Macros for Initialization1506565
+Node: Instruction Output1513288
+Node: Dispatch Tables1523790
+Node: Exception Region Output1528168
+Node: Alignment Output1534851
+Node: Debugging Info1539396
+Node: All Debuggers1540066
+Node: DBX Options1542921
+Node: DBX Hooks1548370
+Node: File Names and DBX1549679
+Node: SDB and DWARF1551791
+Node: VMS Debug1557863
+Node: Floating Point1558450
+Node: Mode Switching1562926
+Node: Target Attributes1566922
+Node: Emulated TLS1575236
+Node: MIPS Coprocessors1578626
+Node: PCH Target1579923
+Node: C++ ABI1581765
+Node: Named Address Spaces1586557
+Node: Misc1591496
+Ref: TARGET_SHIFT_TRUNCATION_MASK1598238
+Node: Host Config1643404
+Node: Host Common1644472
+Node: Filesystem1646851
+Node: Host Misc1650966
+Node: Fragments1653415
+Node: Target Fragment1654610
+Node: Host Fragment1665243
+Node: Collect21665483
+Node: Header Dirs1668119
+Node: Type Information1669542
+Node: GTY Options1672765
+Node: User GC1687086
+Node: GGC Roots1690813
+Node: Files1691529
+Node: Invoking the garbage collector1694236
+Node: Troubleshooting1695739
+Node: Plugins1696815
+Node: Plugins loading1697933
+Node: Plugin API1698802
+Node: Plugins pass1705831
+Node: Plugins GC1707800
+Node: Plugins description1709460
+Node: Plugins attr1709995
+Node: Plugins recording1711880
+Node: Plugins gate1712730
+Node: Plugins tracking1713321
+Node: Plugins building1713909
+Node: LTO1715695
+Node: LTO Overview1716556
+Node: LTO object file layout1722388
+Node: IPA1727020
+Node: WHOPR1735985
+Node: Internal flags1740676
+Node: Funding1741888
+Node: GNU Project1744371
+Node: Copying1745020
+Node: GNU Free Documentation License1782551
+Node: Contributors1807691
+Node: Option Index1845096
+Node: Concept Index1845900
 
 End Tag Table
