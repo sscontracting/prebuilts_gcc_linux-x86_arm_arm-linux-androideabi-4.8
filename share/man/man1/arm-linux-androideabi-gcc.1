@@ -124,7 +124,7 @@
 .\" ========================================================================
 .\"
 .IX Title "GCC 1"
-.TH GCC 1 "2013-03-22" "gcc-4.8" "GNU"
+.TH GCC 1 "2013-04-01" "gcc-4.8.1" "GNU"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -522,7 +522,8 @@ in the following sections.
 \&\-mtp=\fR\fIname\fR \fB\-mtls\-dialect=\fR\fIdialect\fR 
 \&\fB\-mword\-relocations 
 \&\-mfix\-cortex\-m3\-ldrd 
-\&\-munaligned\-access\fR
+\&\-munaligned\-access 
+\&\-mneon\-for\-64bits\fR
 .Sp
 \&\fI\s-1AVR\s0 Options\fR
 \&\fB\-mmcu=\fR\fImcu\fR \fB\-maccumulate\-args \-mbranch\-cost=\fR\fIcost\fR 
@@ -667,8 +668,7 @@ in the following sections.
 \&\-mcmodel=\fR\fIcode-model\fR \fB\-mabi=\fR\fIname\fR \fB\-maddress\-mode=\fR\fImode\fR 
 \&\fB\-m32 \-m64 \-mx32 \-mlarge\-data\-threshold=\fR\fInum\fR 
 \&\fB\-msse2avx \-mfentry \-m8bit\-idiv 
-\&\-mavx256\-split\-unaligned\-load \-mavx256\-split\-unaligned\-store 
-\&\-mstack\-protector\-guard=\fR\fIguard\fR
+\&\-mavx256\-split\-unaligned\-load \-mavx256\-split\-unaligned\-store\fR
 .Sp
 \&\fIi386 and x86\-64 Windows Options\fR
 \&\fB\-mconsole \-mcygwin \-mno\-cygwin \-mdll 
@@ -935,7 +935,6 @@ See \s-1RS/6000\s0 and PowerPC Options.
 \&\-mfaster\-structs  \-mno\-faster\-structs  \-mflat  \-mno\-flat 
 \&\-mfpu  \-mno\-fpu  \-mhard\-float  \-msoft\-float 
 \&\-mhard\-quad\-float  \-msoft\-quad\-float 
-\&\-mlittle\-endian 
 \&\-mstack\-bias  \-mno\-stack\-bias 
 \&\-munaligned\-doubles  \-mno\-unaligned\-doubles 
 \&\-mv8plus  \-mno\-v8plus  \-mvis  \-mno\-vis 
@@ -7481,7 +7480,7 @@ compiled.  All public functions and variables with the exception of \f(CW\*(C`ma
 and those merged by attribute \f(CW\*(C`externally_visible\*(C'\fR become static functions
 and in effect are optimized more aggressively by interprocedural optimizers.
 .Sp
-In combination with \f(CW\*(C`\-flto\*(C'\fR using this option should not be used.
+This option should not be used in combination with \f(CW\*(C`\-flto\*(C'\fR.
 Instead relying on a linker plugin should provide safer and more precise
 information.
 .IP "\fB\-flto[=\fR\fIn\fR\fB]\fR" 4
@@ -7736,9 +7735,6 @@ Use the \fBbfd\fR linker instead of the default linker.
 .IP "\fB\-fuse\-ld=gold\fR" 4
 .IX Item "-fuse-ld=gold"
 Use the \fBgold\fR linker instead of the default linker.
-.IP "\fB\-fuse\-ld=mcld\fR" 4
-.IX Item "-fuse-ld=mcld"
-Use the \fBmcld\fR linker instead of the default linker.
 .IP "\fB\-fcprop\-registers\fR" 4
 .IX Item "-fcprop-registers"
 After register allocation and post-register allocation instruction splitting,
@@ -10517,7 +10513,7 @@ assembly code.  Permissible names are: \fBarm2\fR, \fBarm250\fR,
 \&\fBarm1156t2\-s\fR, \fBarm1156t2f\-s\fR, \fBarm1176jz\-s\fR, \fBarm1176jzf\-s\fR,
 \&\fBcortex\-a5\fR, \fBcortex\-a7\fR, \fBcortex\-a8\fR, \fBcortex\-a9\fR, 
 \&\fBcortex\-a15\fR, \fBcortex\-r4\fR, \fBcortex\-r4f\fR, \fBcortex\-r5\fR,
-\&\fBcortex\-m4\fR, \fBcortex\-m3\fR,
+\&\fBcortex\-r7\fR, \fBcortex\-m4\fR, \fBcortex\-m3\fR,
 \&\fBcortex\-m1\fR,
 \&\fBcortex\-m0\fR,
 \&\fBcortex\-m0plus\fR,
@@ -10763,6 +10759,11 @@ generated object file to either true or false, depending upon the
 setting of this option.  If unaligned access is enabled then the
 preprocessor symbol \f(CW\*(C`_\|_ARM_FEATURE_UNALIGNED\*(C'\fR will also be
 defined.
+.IP "\fB\-mneon\-for\-64bits\fR" 4
+.IX Item "-mneon-for-64bits"
+Enables using Neon to handle scalar 64\-bits operations. This is
+disabled by default since the cost of moving data from core registers
+to Neon is high.
 .PP
 \fI\s-1AVR\s0 Options\fR
 .IX Subsection "AVR Options"
@@ -10990,7 +10991,7 @@ points to.
 The startup code from libgcc never sets \f(CW\*(C`EIND\*(C'\fR.
 Notice that startup code is a blend of code from libgcc and AVR-LibC.
 For the impact of AVR-LibC on \f(CW\*(C`EIND\*(C'\fR, see the
-AVR-LibC\ user\ manual (\f(CW\*(C`http://nongnu.org/avr\-libc/user\-manual\*(C'\fR).
+AVR-LibC\ user\ manual (\f(CW\*(C`http://nongnu.org/avr\-libc/user\-manual/\*(C'\fR).
 .IP "\(bu" 4
 It is legitimate for user-specific startup code to set up \f(CW\*(C`EIND\*(C'\fR
 early, for example by means of initialization code located in
@@ -13727,12 +13728,6 @@ to 255, 8\-bit unsigned integer divide is used instead of
 .IX Item "-mavx256-split-unaligned-store"
 .PD
 Split 32\-byte \s-1AVX\s0 unaligned load and store.
-.IP "\fB\-mstack\-protector\-guard=\fR\fIguard\fR" 4
-.IX Item "-mstack-protector-guard=guard"
-Generate stack protection code using canary at \fIguard\fR.  Supported
-locations are \fBglobal\fR or \fBtls\fR per thread at \f(CW%gs:20\fR (the default).
-This option has effect only when \fB\-fstack\-protector\fR
-or \fB\-fstack\-protector\-all\fR is also specified.
 .PP
 These \fB\-m\fR switches are supported in addition to the above
 on x86\-64 processors in 64\-bit environments.
@@ -18312,10 +18307,6 @@ processor (which corresponds to erratum #13 of the \s-1AT697E\s0 processor).
 .PP
 These \fB\-m\fR options are supported in addition to the above
 on \s-1SPARC\-V9\s0 processors in 64\-bit environments:
-.IP "\fB\-mlittle\-endian\fR" 4
-.IX Item "-mlittle-endian"
-Generate code for a processor running in little-endian mode.  It is only
-available for a few configurations and most notably not on Solaris and Linux.
 .IP "\fB\-m32\fR" 4
 .IX Item "-m32"
 .PD 0
