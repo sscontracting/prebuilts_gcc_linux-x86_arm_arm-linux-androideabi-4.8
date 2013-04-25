@@ -668,7 +668,8 @@ in the following sections.
 \&\-mcmodel=\fR\fIcode-model\fR \fB\-mabi=\fR\fIname\fR \fB\-maddress\-mode=\fR\fImode\fR 
 \&\fB\-m32 \-m64 \-mx32 \-mlarge\-data\-threshold=\fR\fInum\fR 
 \&\fB\-msse2avx \-mfentry \-m8bit\-idiv 
-\&\-mavx256\-split\-unaligned\-load \-mavx256\-split\-unaligned\-store\fR
+\&\-mavx256\-split\-unaligned\-load \-mavx256\-split\-unaligned\-store 
+\&\-mstack\-protector\-guard=\fR\fIguard\fR
 .Sp
 \&\fIi386 and x86\-64 Windows Options\fR
 \&\fB\-mconsole \-mcygwin \-mno\-cygwin \-mdll 
@@ -13728,6 +13729,12 @@ to 255, 8\-bit unsigned integer divide is used instead of
 .IX Item "-mavx256-split-unaligned-store"
 .PD
 Split 32\-byte \s-1AVX\s0 unaligned load and store.
+.IP "\fB\-mstack\-protector\-guard=\fR\fIguard\fR" 4
+.IX Item "-mstack-protector-guard=guard"
+Generate stack protection code using canary at \fIguard\fR.  Supported
+locations are \fBglobal\fR or \fBtls\fR per thread at \f(CW%gs:20\fR (the default).
+This option has effect only when \fB\-fstack\-protector\fR
+or \fB\-fstack\-protector\-all\fR is also specified.
 .PP
 These \fB\-m\fR switches are supported in addition to the above
 on x86\-64 processors in 64\-bit environments.
