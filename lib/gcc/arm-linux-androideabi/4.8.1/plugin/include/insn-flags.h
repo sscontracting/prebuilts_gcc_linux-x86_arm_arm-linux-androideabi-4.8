@@ -5,7 +5,9 @@
 #define GCC_INSN_FLAGS_H
 
 #define HAVE_addsi3_compare0 (TARGET_ARM)
+#define HAVE_cmpsi2_addneg (TARGET_32BIT && INTVAL (operands[2]) == -INTVAL (operands[3]))
 #define HAVE_thumb1_subsi3_insn (TARGET_THUMB1)
+#define HAVE_subsi3_compare (TARGET_32BIT)
 #define HAVE_mulhisi3 (TARGET_DSP_MULTIPLY)
 #define HAVE_maddhisi4 (TARGET_DSP_MULTIPLY)
 #define HAVE_maddhidi4 (TARGET_DSP_MULTIPLY)
@@ -369,7 +371,6 @@
 #define HAVE_andv2sf3 (TARGET_NEON)
 #define HAVE_andv4sf3 (TARGET_NEON)
 #define HAVE_andv2di3 (TARGET_NEON)
-#define HAVE_anddi3_neon (TARGET_NEON)
 #define HAVE_ornv8qi3_neon (TARGET_NEON)
 #define HAVE_ornv16qi3_neon (TARGET_NEON)
 #define HAVE_ornv4hi3_neon (TARGET_NEON)
@@ -1254,6 +1255,12 @@
 #define HAVE_neon_vabdv2sf_3 (TARGET_NEON && (!true || flag_unsafe_math_optimizations))
 #define HAVE_neon_vabdv4sf_3 (TARGET_NEON && (!true || flag_unsafe_math_optimizations))
 #define HAVE_neon_vabdv2di_3 (TARGET_NEON && (!false || flag_unsafe_math_optimizations))
+#define HAVE_atomic_loadqi (TARGET_HAVE_LDACQ)
+#define HAVE_atomic_loadhi (TARGET_HAVE_LDACQ)
+#define HAVE_atomic_loadsi (TARGET_HAVE_LDACQ)
+#define HAVE_atomic_storeqi (TARGET_HAVE_LDACQ)
+#define HAVE_atomic_storehi (TARGET_HAVE_LDACQ)
+#define HAVE_atomic_storesi (TARGET_HAVE_LDACQ)
 #define HAVE_atomic_loaddi_1 (TARGET_HAVE_LDREXD && ARM_DOUBLEWORD_ALIGN)
 #define HAVE_atomic_compare_and_swapqi_1 (TARGET_HAVE_LDREXBH && TARGET_HAVE_MEMORY_BARRIER)
 #define HAVE_atomic_compare_and_swaphi_1 (TARGET_HAVE_LDREXBH && TARGET_HAVE_MEMORY_BARRIER)
@@ -1357,13 +1364,21 @@
 	&& TARGET_HAVE_MEMORY_BARRIER)
 #define HAVE_arm_load_exclusiveqi (TARGET_HAVE_LDREXBH)
 #define HAVE_arm_load_exclusivehi (TARGET_HAVE_LDREXBH)
+#define HAVE_arm_load_acquire_exclusiveqi (TARGET_HAVE_LDACQ)
+#define HAVE_arm_load_acquire_exclusivehi (TARGET_HAVE_LDACQ)
 #define HAVE_arm_load_exclusivesi (TARGET_HAVE_LDREX)
+#define HAVE_arm_load_acquire_exclusivesi (TARGET_HAVE_LDACQ)
 #define HAVE_arm_load_exclusivedi (TARGET_HAVE_LDREXD)
+#define HAVE_arm_load_acquire_exclusivedi (TARGET_HAVE_LDACQ && ARM_DOUBLEWORD_ALIGN)
 #define HAVE_arm_store_exclusiveqi (TARGET_HAVE_LDREXBH && TARGET_HAVE_MEMORY_BARRIER)
 #define HAVE_arm_store_exclusivehi (TARGET_HAVE_LDREXBH && TARGET_HAVE_MEMORY_BARRIER)
 #define HAVE_arm_store_exclusivesi (TARGET_HAVE_LDREX && TARGET_HAVE_MEMORY_BARRIER)
 #define HAVE_arm_store_exclusivedi (TARGET_HAVE_LDREXD && ARM_DOUBLEWORD_ALIGN \
 	&& TARGET_HAVE_MEMORY_BARRIER)
+#define HAVE_arm_store_release_exclusivedi (TARGET_HAVE_LDACQ && ARM_DOUBLEWORD_ALIGN)
+#define HAVE_arm_store_release_exclusiveqi (TARGET_HAVE_LDACQ)
+#define HAVE_arm_store_release_exclusivehi (TARGET_HAVE_LDACQ)
+#define HAVE_arm_store_release_exclusivesi (TARGET_HAVE_LDACQ)
 #define HAVE_addqq3 (TARGET_32BIT)
 #define HAVE_addhq3 (TARGET_32BIT)
 #define HAVE_addsq3 (TARGET_32BIT)
@@ -1424,12 +1439,10 @@
 #define HAVE_arm_usatsihi (TARGET_INT_SIMD)
 #define HAVE_adddi3 1
 #define HAVE_addsi3 1
-#define HAVE_incscc (TARGET_32BIT)
 #define HAVE_addsf3 (TARGET_32BIT && TARGET_HARD_FLOAT)
 #define HAVE_adddf3 (TARGET_32BIT && TARGET_HARD_FLOAT && !TARGET_VFP_SINGLE)
 #define HAVE_subdi3 1
 #define HAVE_subsi3 1
-#define HAVE_decscc (TARGET_32BIT)
 #define HAVE_subsf3 (TARGET_32BIT && TARGET_HARD_FLOAT)
 #define HAVE_subdf3 (TARGET_32BIT && TARGET_HARD_FLOAT && !TARGET_VFP_SINGLE)
 #define HAVE_mulsi3 1
@@ -2396,7 +2409,9 @@
 #define HAVE_ssmulha3 (TARGET_32BIT && TARGET_DSP_MULTIPLY && arm_arch6)
 #define HAVE_usmuluha3 (TARGET_INT_SIMD)
 extern rtx        gen_addsi3_compare0                   (rtx, rtx, rtx);
+extern rtx        gen_cmpsi2_addneg                     (rtx, rtx, rtx, rtx);
 extern rtx        gen_thumb1_subsi3_insn                (rtx, rtx, rtx);
+extern rtx        gen_subsi3_compare                    (rtx, rtx, rtx);
 extern rtx        gen_mulhisi3                          (rtx, rtx, rtx);
 extern rtx        gen_maddhisi4                         (rtx, rtx, rtx, rtx);
 extern rtx        gen_maddhidi4                         (rtx, rtx, rtx, rtx);
@@ -2766,7 +2781,6 @@ extern rtx        gen_andv4si3                          (rtx, rtx, rtx);
 extern rtx        gen_andv2sf3                          (rtx, rtx, rtx);
 extern rtx        gen_andv4sf3                          (rtx, rtx, rtx);
 extern rtx        gen_andv2di3                          (rtx, rtx, rtx);
-extern rtx        gen_anddi3_neon                       (rtx, rtx, rtx);
 extern rtx        gen_ornv8qi3_neon                     (rtx, rtx, rtx);
 extern rtx        gen_ornv16qi3_neon                    (rtx, rtx, rtx);
 extern rtx        gen_ornv4hi3_neon                     (rtx, rtx, rtx);
@@ -3647,6 +3661,12 @@ extern rtx        gen_neon_vabdv4si_3                   (rtx, rtx, rtx);
 extern rtx        gen_neon_vabdv2sf_3                   (rtx, rtx, rtx);
 extern rtx        gen_neon_vabdv4sf_3                   (rtx, rtx, rtx);
 extern rtx        gen_neon_vabdv2di_3                   (rtx, rtx, rtx);
+extern rtx        gen_atomic_loadqi                     (rtx, rtx, rtx);
+extern rtx        gen_atomic_loadhi                     (rtx, rtx, rtx);
+extern rtx        gen_atomic_loadsi                     (rtx, rtx, rtx);
+extern rtx        gen_atomic_storeqi                    (rtx, rtx, rtx);
+extern rtx        gen_atomic_storehi                    (rtx, rtx, rtx);
+extern rtx        gen_atomic_storesi                    (rtx, rtx, rtx);
 extern rtx        gen_atomic_loaddi_1                   (rtx, rtx);
 extern rtx        gen_atomic_compare_and_swapqi_1       (rtx, rtx, rtx, rtx, rtx, rtx, rtx);
 extern rtx        gen_atomic_compare_and_swaphi_1       (rtx, rtx, rtx, rtx, rtx, rtx, rtx);
@@ -3730,12 +3750,20 @@ extern rtx        gen_atomic_nand_fetchsi               (rtx, rtx, rtx, rtx);
 extern rtx        gen_atomic_nand_fetchdi               (rtx, rtx, rtx, rtx);
 extern rtx        gen_arm_load_exclusiveqi              (rtx, rtx);
 extern rtx        gen_arm_load_exclusivehi              (rtx, rtx);
+extern rtx        gen_arm_load_acquire_exclusiveqi      (rtx, rtx);
+extern rtx        gen_arm_load_acquire_exclusivehi      (rtx, rtx);
 extern rtx        gen_arm_load_exclusivesi              (rtx, rtx);
+extern rtx        gen_arm_load_acquire_exclusivesi      (rtx, rtx);
 extern rtx        gen_arm_load_exclusivedi              (rtx, rtx);
+extern rtx        gen_arm_load_acquire_exclusivedi      (rtx, rtx);
 extern rtx        gen_arm_store_exclusiveqi             (rtx, rtx, rtx);
 extern rtx        gen_arm_store_exclusivehi             (rtx, rtx, rtx);
 extern rtx        gen_arm_store_exclusivesi             (rtx, rtx, rtx);
 extern rtx        gen_arm_store_exclusivedi             (rtx, rtx, rtx);
+extern rtx        gen_arm_store_release_exclusivedi     (rtx, rtx, rtx);
+extern rtx        gen_arm_store_release_exclusiveqi     (rtx, rtx, rtx);
+extern rtx        gen_arm_store_release_exclusivehi     (rtx, rtx, rtx);
+extern rtx        gen_arm_store_release_exclusivesi     (rtx, rtx, rtx);
 extern rtx        gen_addqq3                            (rtx, rtx, rtx);
 extern rtx        gen_addhq3                            (rtx, rtx, rtx);
 extern rtx        gen_addsq3                            (rtx, rtx, rtx);
@@ -3796,12 +3824,10 @@ extern rtx        gen_arm_ssatsihi_shift                (rtx, rtx, rtx, rtx);
 extern rtx        gen_arm_usatsihi                      (rtx, rtx);
 extern rtx        gen_adddi3                            (rtx, rtx, rtx);
 extern rtx        gen_addsi3                            (rtx, rtx, rtx);
-extern rtx        gen_incscc                            (rtx, rtx, rtx, rtx);
 extern rtx        gen_addsf3                            (rtx, rtx, rtx);
 extern rtx        gen_adddf3                            (rtx, rtx, rtx);
 extern rtx        gen_subdi3                            (rtx, rtx, rtx);
 extern rtx        gen_subsi3                            (rtx, rtx, rtx);
-extern rtx        gen_decscc                            (rtx, rtx, rtx, rtx);
 extern rtx        gen_subsf3                            (rtx, rtx, rtx);
 extern rtx        gen_subdf3                            (rtx, rtx, rtx);
 extern rtx        gen_mulsi3                            (rtx, rtx, rtx);

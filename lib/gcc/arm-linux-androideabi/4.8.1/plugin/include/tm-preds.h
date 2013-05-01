@@ -22,6 +22,8 @@ extern int indirect_operand (rtx, enum machine_mode);
 extern int ordered_comparison_operator (rtx, enum machine_mode);
 extern int comparison_operator (rtx, enum machine_mode);
 extern int s_register_operand (rtx, enum machine_mode);
+extern int imm_for_neon_inv_logic_operand (rtx, enum machine_mode);
+extern int neon_inv_logic_op2 (rtx, enum machine_mode);
 extern int arm_hard_register_operand (rtx, enum machine_mode);
 extern int low_register_operand (rtx, enum machine_mode);
 extern int low_reg_or_int_operand (rtx, enum machine_mode);
@@ -42,6 +44,7 @@ extern int shift_amount_operand (rtx, enum machine_mode);
 extern int const_neon_scalar_shift_amount_operand (rtx, enum machine_mode);
 extern int ldrd_strd_offset_operand (rtx, enum machine_mode);
 extern int arm_add_operand (rtx, enum machine_mode);
+extern int arm_anddi_operand_neon (rtx, enum machine_mode);
 extern int arm_adddi_operand (rtx, enum machine_mode);
 extern int arm_addimm_operand (rtx, enum machine_mode);
 extern int arm_not_operand (rtx, enum machine_mode);
@@ -63,6 +66,7 @@ extern int equality_operator (rtx, enum machine_mode);
 extern int expandable_comparison_operator (rtx, enum machine_mode);
 extern int arm_comparison_operator (rtx, enum machine_mode);
 extern int lt_ge_comparison_operator (rtx, enum machine_mode);
+extern int arm_vsel_comparison_operator (rtx, enum machine_mode);
 extern int noov_comparison_operator (rtx, enum machine_mode);
 extern int minmax_operator (rtx, enum machine_mode);
 extern int cc_register (rtx, enum machine_mode);
@@ -91,9 +95,7 @@ extern int imm_for_neon_rshift_operand (rtx, enum machine_mode);
 extern int imm_lshift_or_reg_neon (rtx, enum machine_mode);
 extern int imm_rshift_or_reg_neon (rtx, enum machine_mode);
 extern int imm_for_neon_logic_operand (rtx, enum machine_mode);
-extern int imm_for_neon_inv_logic_operand (rtx, enum machine_mode);
 extern int neon_logic_op2 (rtx, enum machine_mode);
-extern int neon_inv_logic_op2 (rtx, enum machine_mode);
 extern int cmpdi_operand (rtx, enum machine_mode);
 extern int arm_sync_memory_operand (rtx, enum machine_mode);
 extern int vect_par_constant_high (rtx, enum machine_mode);
@@ -120,6 +122,7 @@ enum constraint_num
   CONSTRAINT_Pj,
   CONSTRAINT_PJ,
   CONSTRAINT_k,
+  CONSTRAINT_q,
   CONSTRAINT_b,
   CONSTRAINT_c,
   CONSTRAINT_I,
@@ -147,6 +150,7 @@ enum constraint_num
   CONSTRAINT_Db,
   CONSTRAINT_Dc,
   CONSTRAINT_Dd,
+  CONSTRAINT_De,
   CONSTRAINT_Di,
   CONSTRAINT_Dn,
   CONSTRAINT_Dl,
