@@ -65,7 +65,7 @@ SECTIONS
     }
   .init           :
   {
-    KEEP (*(.init))
+    KEEP (*(SORT_NONE(.init)))
   }
   .plt            : { *(.plt) }
   .iplt           : { *(.iplt) }
@@ -82,7 +82,7 @@ SECTIONS
   }
   .fini           :
   {
-    KEEP (*(.fini))
+    KEEP (*(SORT_NONE(.fini)))
   }
   PROVIDE (__etext = .);
   PROVIDE (_etext = .);

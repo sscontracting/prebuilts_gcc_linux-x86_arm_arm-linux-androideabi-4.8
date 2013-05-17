@@ -60,7 +60,7 @@ SECTIONS
     }
   .init         0 :
   {
-    KEEP (*(.init))
+    KEEP (*(SORT_NONE(.init)))
   }
   .plt          0 : { *(.plt) }
   .iplt         0 : { *(.iplt) }
@@ -72,7 +72,7 @@ SECTIONS
   }
   .fini         0 :
   {
-    KEEP (*(.fini))
+    KEEP (*(SORT_NONE(.fini)))
   }
   .rodata       0 : { *(.rodata) }
   .rodata1      0 : { *(.rodata1) }
